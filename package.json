@@ -20,6 +20,10 @@
       {
         "command": "suspicious-extension.ingressToolTransfer",
         "title": "Ingress Tool Transfer (T1105)"
+      },
+      {
+        "command": "suspicious-extension.credentialScrape",
+        "title": "Credentials In Files (T1552.001)"
       }
     ]
   },
