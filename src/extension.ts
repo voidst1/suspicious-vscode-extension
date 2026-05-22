@@ -1,25 +1,37 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as https from 'https';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "suspicious-extension" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('suspicious-extension.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
+	const helloWorld = vscode.commands.registerCommand('suspicious-extension.helloWorld', () => {
 		vscode.window.showInformationMessage('Hello World from Suspicious Extension!');
 	});
 
-	context.subscriptions.push(disposable);
+	// T1105 - Ingress Tool Transfer: downloads EICAR test file to demonstrate technique
+	const ingressToolTransfer = vscode.commands.registerCommand('suspicious-extension.ingressToolTransfer', () => {
+		const destPath = path.join(os.tmpdir(), 'eicar.com');
+		const url = 'https://secure.eicar.org/eicar.com';
+
+		vscode.window.showInformationMessage(`T1105: Downloading EICAR test file to ${destPath}...`);
+
+		const file = fs.createWriteStream(destPath);
+		https.get(url, (response) => {
+			response.pipe(file);
+			file.on('finish', () => {
+				file.close();
+				vscode.window.showWarningMessage(`T1105: EICAR test file written to ${destPath}`);
+			});
+		}).on('error', (err) => {
+			fs.unlink(destPath, () => {});
+			vscode.window.showErrorMessage(`T1105: Download failed — ${err.message}`);
+		});
+	});
+
+	context.subscriptions.push(helloWorld, ingressToolTransfer);
 }
 
 // This method is called when your extension is deactivated

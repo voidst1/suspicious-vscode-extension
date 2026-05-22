@@ -16,6 +16,10 @@
       {
         "command": "suspicious-extension.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "suspicious-extension.ingressToolTransfer",
+        "title": "Ingress Tool Transfer (T1105)"
       }
     ]
   },
