@@ -3,6 +3,7 @@ import * as https from 'https';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
+import { exec } from 'child_process';
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "suspicious-extension" is now active!');
@@ -111,7 +112,19 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showWarningMessage(`T1552.001: Scrape complete — ${totalHits} hit(s) in ${allPaths.length} file(s). See output panel.`);
 	});
 
-	context.subscriptions.push(helloWorld, ingressToolTransfer, credentialScrape);
+	// T1059 - Command and Script Interpreter: executes curl to fetch EICAR test file
+	const curlEicar = vscode.commands.registerCommand('suspicious-extension.curlEicar', () => {
+		const destPath = path.join(os.tmpdir(), 'eicar_curl.com');
+		exec(`curl -s -o "${destPath}" https://secure.eicar.org/eicar.com`, (err) => {
+			if (err) {
+				vscode.window.showErrorMessage(`T1059: curl failed — ${err.message}`);
+			} else {
+				vscode.window.showWarningMessage(`T1059: EICAR test file written to ${destPath}`);
+			}
+		});
+	});
+
+	context.subscriptions.push(helloWorld, ingressToolTransfer, credentialScrape, curlEicar);
 }
 
 // This method is called when your extension is deactivated

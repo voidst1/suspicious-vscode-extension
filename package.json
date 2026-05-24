@@ -24,6 +24,10 @@
       {
         "command": "suspicious-extension.credentialScrape",
         "title": "Credentials In Files (T1552.001)"
+      },
+      {
+        "command": "suspicious-extension.curlEicar",
+        "title": "Curl EICAR (T1059)"
       }
     ]
   },
